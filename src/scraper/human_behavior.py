@@ -155,7 +155,7 @@ def is_captcha_present(driver):
     
     # 關鍵字判斷
     page_source = driver.page_source.lower()
-    for indicator in ["verify you are human", "請輸入驗證碼", "please enter the characters"]:
+    for indicator in ["verify you are human", "驗證你是人類" "請輸入驗證碼", "please enter the characters"]:
         if indicator in page_source:
             print(f"[CAPTCHA] 命中關鍵字: {indicator}")
             return True
