@@ -31,11 +31,12 @@ def test_scraper():
                 
             except:
                 pass
+
                 
             print(f"HTML 長度: {len(data['html'])} 字元")
 
-            print(f"摘要: {data['processed_text']['summary']}")
-            print(f"全文: {data['full_text']['summary']}")
+            print(f"摘要: {data['processed_text']}")
+            print(f"全文: {data['full_text']}")
             
             # 保存結果
             with open("result.html", "w", encoding="utf-8") as f:

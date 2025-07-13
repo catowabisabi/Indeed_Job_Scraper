@@ -135,19 +135,28 @@ def random_actions(driver):
         logging.warning(f"Random action failed: {str(e)}")
 
 def is_captcha_present(driver):
-    """檢查是否存在驗證碼"""
+    """檢查是否存在驗證碼，並打印出現的 selector 或關鍵字"""
     captcha_selectors = [
         "#captcha",
-        ".captcha",
+        ".captcha-image",
         "#challenge-form",
-        "[class*='captcha']",
-        "[id*='captcha']"
+        "input[name='captcha']",
+        "img[src*='captcha']"
     ]
-    
     try:
-        return any(len(driver.find_elements(By.CSS_SELECTOR, selector)) > 0 
-            for selector in captcha_selectors)
-    except:
-        # 如果選擇器失敗，再使用原來的方法
-        return any(indicator in driver.page_source.lower() 
-                for indicator in ["captcha", "verify you are human"]) 
+        for selector in captcha_selectors:
+            elements = driver.find_elements(By.CSS_SELECTOR, selector)
+            visible_elements = [el for el in elements if el.is_displayed()]
+            if len(visible_elements) > 0:
+                print(f"[CAPTCHA] 命中 selector: {selector}，可見元素數量: {len(visible_elements)}")
+                return True
+    except Exception as e:
+        print(f"[CAPTCHA] selector 查找失敗: {e}")
+    
+    # 關鍵字判斷
+    page_source = driver.page_source.lower()
+    for indicator in ["verify you are human", "請輸入驗證碼", "please enter the characters"]:
+        if indicator in page_source:
+            print(f"[CAPTCHA] 命中關鍵字: {indicator}")
+            return True
+    return False

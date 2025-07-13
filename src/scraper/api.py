@@ -305,8 +305,20 @@ class WebScraperAPI:
         processed_text = self.text_processor.process_with_chatgpt(pure_text)
         full_text = self.text_processor.process_with_chatgpt_md(pure_text)
 
-        summary = processed_text.get("summary", "") if isinstance(processed_text, dict) else ""
-        markdown = full_text.get("markdown", "") if isinstance(full_text, dict) else ""
+        # 安全處理
+        if isinstance(processed_text, dict):
+            summary = processed_text.get("summary", "")
+        elif isinstance(processed_text, str):
+            summary = processed_text
+        else:
+            summary = ""
+
+        if isinstance(full_text, dict):
+            markdown = full_text.get("markdown", "")
+        elif isinstance(full_text, str):
+            markdown = full_text
+        else:
+            markdown = ""
 
         return {
             "status": "success",

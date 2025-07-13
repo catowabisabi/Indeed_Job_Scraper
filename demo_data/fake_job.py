@@ -1,5 +1,5 @@
-fake_job_url = "https://ca.indeed.com/viewjob?jk=7b2f8eebe94e3d8a&q=data+analyst&l=Concord%2C+ON&tk=1it804rdag4bc800&from=ja&alid=6836934a0e4a316b9e60331e&g1tAS=true&xpse=SoBA67I3xrR2CTyC8J0LbzkdCdPP&xfps=643eb9c4-72bd-49ca-8e47-1bd921f9f654&utm_campaign=job_alerts&utm_medium=email&utm_source=jobseeker_emails&rgtk=1it804rdag4bc800&xkcb=SoCh67M3xoIcfoa59J0DbzkdCdPP"
-
+fake_job_url1 = "https://ca.indeed.com/viewjob?jk=7b2f8eebe94e3d8a&q=data+analyst&l=Concord%2C+ON&tk=1it804rdag4bc800&from=ja&alid=6836934a0e4a316b9e60331e&g1tAS=true&xpse=SoBA67I3xrR2CTyC8J0LbzkdCdPP&xfps=643eb9c4-72bd-49ca-8e47-1bd921f9f654&utm_campaign=job_alerts&utm_medium=email&utm_source=jobseeker_emails&rgtk=1it804rdag4bc800&xkcb=SoCh67M3xoIcfoa59J0DbzkdCdPP"
+fake_job_url = "https://www.linkedin.com/jobs/view/4264807543/?alternateChannel=search&eBP=CwEAAAGYBRY2fBT41982UwbR2eeVJpdBElPIi8xFM4qxpOo7eVHMpH7KD3Gl6QT5RlKIUw9mqmi9ycKNkSjQkttCPzh2bPpyTvTeAzSOevdUd-GsiLID39yTBJSncFOLg4TMV2VRx7-vUKOHZDb7UxfZCOrnM5_swoAy2MA74abfauJ7yLToZCq6njWvJqqhLkH2YqunMDpiASp6eGNnTSt60XVt9PU_kgvCbHs4NMCxC_FWrzkF0eHDI_A177gOvdtgae-YenbZvnOdh05zXBXlTnWS6xFlqkWbx6mZXVuwzeR7oDuruwgqAUIYL3lJuba87wl2mz7H3bRr7gcL2mL2VniTsyRZQOV0QjhZqWDFKknbF8cjhT__StVW3JDBsxNVeMPSWakIfYjYR8yhUzYsJj3LsxW6pLltuTbd3hchBwE3msTm1NTrbXrcUw946OvhMYyQ0km5UFb_teVynFWtvECNtMOVMx3XVp9J1wWEEnw&refId=1tpu2GEVMygl2kzslNlbdg%3D%3D&trackingId=IxisljEx8PZZQzS3EogKfg%3D%3D"
 
 
 
