@@ -25,6 +25,107 @@ import os
 import psutil
 import shutil
 import sys
+import platform
+
+def print_chrome_version():
+    try:
+        resp = requests.get(f"http://127.0.0.1:{CHROME_PORT}/json/version", timeout=2)
+        if resp.status_code == 200:
+            data = resp.json()
+            print(f"Chrome version: {data.get('Browser')}")
+        else:
+            print("無法獲取 Chrome 版本")
+    except Exception as e:
+        print(f"獲取 Chrome 版本失敗: {e}")
+
+
+def print_windows_version():
+    print(f"OS: {platform.system()} {platform.release()} ({platform.version()})")
+
+
+
+def print_python_version():
+    print(f"Python version: {sys.version}")
+
+def print_chromedriver_version(driver):
+    try:
+        version = driver.capabilities['chrome']['chromedriverVersion']
+        print(f"ChromeDriver version: {version}")
+    except Exception as e:
+        print(f"無法獲取 ChromeDriver 版本: {e}")
+
+def print_user_agent(driver):
+    try:
+        ua = driver.execute_script("return navigator.userAgent")
+        print(f"User-Agent: {ua}")
+    except Exception as e:
+        print(f"無法獲取 User-Agent: {e}")
+
+def print_screen_info(driver):
+    try:
+        width = driver.execute_script("return screen.width")
+        height = driver.execute_script("return screen.height")
+        color_depth = driver.execute_script("return screen.colorDepth")
+        print(f"Screen: {width}x{height}, Color Depth: {color_depth}")
+    except Exception as e:
+        print(f"無法獲取螢幕資訊: {e}")
+
+def print_language_timezone(driver):
+    try:
+        lang = driver.execute_script("return navigator.language")
+        tz = driver.execute_script("return Intl.DateTimeFormat().resolvedOptions().timeZone")
+        print(f"Language: {lang}, Timezone: {tz}")
+    except Exception as e:
+        print(f"無法獲取語言/時區: {e}")
+
+def print_webgl_info(driver):
+    try:
+        vendor = driver.execute_script("""
+            var canvas = document.createElement('canvas');
+            var gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            var debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+            return gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
+        """)
+        renderer = driver.execute_script("""
+            var canvas = document.createElement('canvas');
+            var gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            var debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+            return gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+        """)
+        print(f"WebGL Vendor: {vendor}, Renderer: {renderer}")
+    except Exception as e:
+        print(f"無法獲取 WebGL 資訊: {e}")
+
+def print_webdriver_flag(driver):
+    try:
+        webdriver_flag = driver.execute_script("return navigator.webdriver")
+        print(f"navigator.webdriver: {webdriver_flag}")
+    except Exception as e:
+        print(f"無法獲取 webdriver 屬性: {e}")
+
+def print_external_ip():
+    try:
+        ip = requests.get("https://api.ipify.org").text
+        print(f"External IP: {ip}")
+    except Exception as e:
+        print(f"無法獲取外部 IP: {e}")
+
+
+
+
+
+def print_env_info(driver):
+    print_python_version()
+    print_windows_version()
+    print_chrome_version()
+    print_chromedriver_version(driver)
+    print_user_agent(driver)
+    print_screen_info(driver)
+    print_language_timezone(driver)
+    print_webgl_info(driver)
+    print_webdriver_flag(driver)
+    print_external_ip()
+
 
 class WebScraperAPI:
     def __init__(self):
@@ -38,7 +139,9 @@ class WebScraperAPI:
         self.text_processor = TextProcessor()
         self.chrome_pid = None
         self.shared_driver = None
+        
         self.shared_driver_lock = threading.Lock()
+        
 
     def _setup_routes(self):
         @self.app.route("/", methods=["GET"])
@@ -71,6 +174,7 @@ class WebScraperAPI:
                         with self.shared_driver_lock:
                             if not self.shared_driver:
                                 self.shared_driver = create_driver(use_session_port=True, headless=headless)
+                                print_env_info(self.shared_driver)
                             driver = self.shared_driver
                             # 檢查並關閉多餘的標籤頁
                             if len(driver.window_handles) > 5:
