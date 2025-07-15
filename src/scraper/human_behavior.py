@@ -163,6 +163,7 @@ def wait_for_loading_to_finish(driver, timeout=10):
         pass
 
 def is_captcha_present(driver):
+    time.sleep(random.uniform(3, 7))
     wait_for_page_load(driver)
     wait_for_captcha_or_page(driver)
     wait_for_loading_to_finish(driver)
