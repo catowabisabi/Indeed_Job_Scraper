@@ -386,6 +386,14 @@ class WebScraperAPI:
                     logging.warning("[Chrome] 工作階段失效，重啟中...")
                     self.chrome_session_running = False
                     try:
+                        # 關閉舊的 driver
+                        if hasattr(self, "driver") and self.driver is not None:
+                            try:
+                                self.driver.quit()
+                            except Exception:
+                                pass
+                            self.driver = None
+                        # 啟動新 session
                         self._launch_chrome_session()
                     except Exception as e:
                         logging.error(f"[Chrome] 重啟失敗: {str(e)}")
