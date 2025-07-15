@@ -6,7 +6,7 @@ import requests
 import subprocess
 import time
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import Flask, request, jsonify
 from config.settings import (
     CHROME_PATH,
@@ -133,15 +133,44 @@ class WebScraperAPI:
         self._setup_routes()
         self.chrome_session_lock = threading.Lock()
         self.chrome_session_running = False
-        self.request_semaphore = threading.Semaphore(3)
+        self.request_semaphore = threading.Semaphore(30)  # 調整為30
         self.start_time = None
         self.max_retries = MAX_RETRIES
         self.text_processor = TextProcessor()
         self.chrome_pid = None
         self.shared_driver = None
-        
         self.shared_driver_lock = threading.Lock()
-        
+        # 429監控
+        self.last_429_time = None
+        self.last_success_time = None
+        self._start_429_monitor()
+
+    def _start_429_monitor(self):
+        def monitor():
+            while True:
+                time.sleep(60)  # 每分鐘檢查一次
+                now = datetime.now()
+                if self.last_429_time and (not self.last_success_time or (self.last_success_time < self.last_429_time)):
+                    if now - self.last_429_time > timedelta(minutes=15):
+                        logging.warning("[429監控] 15分鐘內都只有429，執行自動清理！")
+                        self._force_cleanup()
+                        self.last_429_time = None  # 重置
+        t = threading.Thread(target=monitor, daemon=True)
+        t.start()
+
+    def _force_cleanup(self):
+        # 強制釋放所有 Semaphore
+        max_val = 30  # 與 Semaphore 初始化值一致
+        while self.request_semaphore._value < max_val:
+            try:
+                self.request_semaphore.release()
+            except Exception:
+                break
+        # 重啟 Chrome session
+        try:
+            self._launch_chrome_session()
+        except Exception as e:
+            logging.error(f"[429監控] 清理時重啟 Chrome 失敗: {e}")
 
     def _setup_routes(self):
         @self.app.route("/", methods=["GET"])
@@ -151,8 +180,9 @@ class WebScraperAPI:
         @self.app.route("/scrape", methods=["POST"])
         def scrape():
             if not self.request_semaphore.acquire(blocking=False):
+                self.last_429_time = datetime.now()
                 return jsonify({"error": "伺服器繁忙，請稍後再試"}), 429
-
+            self.last_success_time = datetime.now()
             try:
                 data = request.json
                 url = data.get("url")
