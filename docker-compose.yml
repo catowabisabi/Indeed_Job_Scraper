@@ -1,0 +1,44 @@
+version: "3.9"
+
+services:
+  scraper:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: indeed-job-scraper
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+      - "9222:9222"
+    environment:
+      SCRAPER_HEADLESS: "true"
+      OPENAI_API_KEY: "${OPENAI_API_KEY:-}"
+      CHROME_PATH: "/usr/bin/google-chrome"
+    volumes:
+      - type: bind
+        source: ./logs
+        target: /app/logs
+      - type: bind
+        source: ./chrome-data
+        target: /app/chrome-data
+      - type: bind
+        source: ./chrome-login-data
+        target: /app/chrome-login-data
+      - type: bind
+        source: ./config
+        target: /app/config
+      - type: bind
+        source: ./src
+        target: /app/src
+      - type: bind
+        source: ./demo_data
+        target: /app/demo_data
+      - type: bind
+        source: ./tests
+        target: /app/tests
+      - type: bind
+        source: ./requirements.txt
+        target: /app/requirements.txt
+    tmpfs:
+      - /tmp:size=256m
+    shm_size: "1gb"
